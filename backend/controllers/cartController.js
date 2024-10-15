@@ -85,7 +85,7 @@ export const getCart = async (req, res) => {
 
 
 export const removeFromCart = async (req, res) => {
-  const { id } = req.params; // Product ID to remove
+  const { id } = req.params; 
   const user = req.user;
 
   try {
@@ -94,26 +94,26 @@ export const removeFromCart = async (req, res) => {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
-    // Remove the item from the cartItems array
+    
     cart.cartItems = cart.cartItems.filter((item) => item.product.toString() !== id);
 
-    // Recalculate total amount after removing the item
+    
     const cartItemsWithPrices = await Promise.all(
       cart.cartItems.map(async (item) => {
-        const product = await Product.findById(item.product); // Fetch the product to get the price
+        const product = await Product.findById(item.product); 
         return {
           qty: item.qty,
-          price: product ? product.price : 0 // If product is found, get the price
+          price: product ? product.price : 0 
         };
       })
     );
 
-    // Calculate the total amount based on qty and product price
+    
     cart.totalAmount = cartItemsWithPrices.reduce((total, item) => {
       return total + item.qty * item.price;
     }, 0);
 
-    // Save the updated cart
+    
     const updatedCart = await cart.save();
     res.json(updatedCart);
   } catch (error) {
