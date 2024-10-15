@@ -1,19 +1,19 @@
-
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser'; 
 import connectDB from './config/db.js';
 
-dotenv.config();
 
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import paypalRoutes from './routes/paypalRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';  
 
+dotenv.config();
 connectDB();
 
 const app = express();
@@ -22,13 +22,14 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); 
+app.use(cookieParser());
 
 
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/paypal', paypalRoutes);
+app.use('/api/cart', cartRoutes);  
 
 
 app.use((err, req, res, next) => {

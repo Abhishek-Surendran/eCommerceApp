@@ -6,10 +6,10 @@ export const createProduct = async (req, res) => {
   try {
     const { title, description, price, category, brand, stock } = req.body;
 
-    
+
     const imageUrl = req.file.path;
 
-    
+
     const product = new Product({
       title,
       description,
@@ -30,12 +30,42 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const { brand, category, minPrice, maxPrice } = req.query;
+
+
+    let query = {};
+
+
+    if (brand) {
+      query.brand = brand;
+    }
+
+
+    if (category) {
+      query.category = category;
+    }
+
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) {
+        query.price.$gte = Number(minPrice);
+      }
+      if (maxPrice) {
+        query.price.$lte = Number(maxPrice);
+      }
+    }
+
+
+    const products = await Product.find(query);
+
+
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: 'Failed to retrieve products', error: error.message });
   }
 };
+
 
 
 export const getProductById = async (req, res) => {
@@ -89,13 +119,13 @@ export const deleteProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-      
-      const imageId = product.image.split('/').pop().split('.')[0]; 
+
+      const imageId = product.image.split('/').pop().split('.')[0];
       await cloudinary.uploader.destroy(`products/${imageId}`);
 
-      
+
       await Product.deleteOne({ _id: req.params.id });
-      
+
 
       res.json({ message: 'Product removed' });
     } else {

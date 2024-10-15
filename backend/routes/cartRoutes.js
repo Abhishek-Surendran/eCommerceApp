@@ -5,8 +5,12 @@ import { protect } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 
-router.post('/', protect, addToCart);
+router.post('/', protect, addToCart); 
+
+
 router.get('/', protect, getCart);
+
+
 router.delete('/:id', protect, removeFromCart);
 
 export default router;
